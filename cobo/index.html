@@ -1,57 +1,81 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<html lang="en"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VAN COBO</title>
 <style>
-  :root{--van:#1f7a43;--van-50:#e8f5ec;--ink:#15301f;--mut:#6b7280;--line:#e3e8e4;--bg:#f4f7f5}
+  :root{--van:#1f7a43;--van-50:#e8f5ec;--ink:#15301f;--mut:#6b7280;--line:#e3e8e4;--bg:#f4f7f5;--navy:#1f4ba8;--amber:#c4820a;--red:#c0392b}
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-  header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line)}
-  .mk{width:34px;height:34px;border-radius:9px;background:var(--van);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
-  header b{font-size:14px}.sp{flex:1}
-  a.back{font-size:12.5px;color:var(--van);text-decoration:none}
-  .wrap{max-width:880px;margin:0 auto;padding:26px 22px}
-  h1{font-size:20px;margin:0 0 4px}.sub{color:var(--mut);font-size:13px;margin:0 0 20px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
-  .card h3{margin:0 0 8px;font-size:14px}
-  ol{margin:6px 0 0;padding-left:20px;color:var(--mut);font-size:13px;line-height:1.7}
-  .pill{display:inline-block;font-size:10px;font-weight:800;background:#fef3df;color:#c4820a;border-radius:10px;padding:2px 9px;margin-left:8px}
-</style>
-</head>
+  header{display:flex;align-items:center;gap:12px;padding:13px 22px;background:#fff;border-bottom:1px solid var(--line)}
+  .mk{width:32px;height:32px;border-radius:9px;background:var(--van);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  header b{font-size:14px}.sp{flex:1}.who{font-size:12px;color:var(--mut);text-align:right}
+  a.back{font-size:12.5px;color:var(--van);text-decoration:none;margin-left:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:22px}
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{padding:8px 16px;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--mut)}
+  .tab.on{background:var(--van);color:#fff;border-color:var(--van)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px;margin-bottom:14px}
+  .card h3{margin:0 0 4px;font-size:15px}.card .sub{color:var(--mut);font-size:12px;margin:0 0 14px}
+  table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);font-size:13px}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+  input{padding:7px 9px;border:1px solid var(--line);border-radius:7px;font-size:13px;width:100%}
+  input.num{text-align:right;max-width:110px}
+  .btn{padding:8px 13px;border:0;border-radius:8px;background:var(--van);color:#fff;font-weight:700;font-size:12.5px;cursor:pointer}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn.sm{padding:5px 10px;font-size:12px}
+  .x{color:var(--red);cursor:pointer;font-weight:700}
+  .row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#15301f;color:#fff;padding:9px 16px;border-radius:9px;font-size:13px;opacity:0;transition:.25s}
+  .toast.show{opacity:1}
+  .pos{color:var(--van);font-weight:700}.neg{color:var(--red);font-weight:700}
+  .muted{color:var(--mut)}
+</style></head>
 <body>
-  <header>
-    <div class="mk">C</div><div><b>VAN COBO</b></div>
-    <div class="sp"></div>
-    <a class="back" href="/">← Control Tower</a>
-  </header>
+  <header><div class="mk">C</div><div><b>VAN COBO</b></div><div class="sp"></div><div class="who" id="who"></div><a class="back" href="/">← Control Tower</a></header>
   <div class="wrap">
-    <h1>VAN COBO <span class="pill">FOUNDATION</span></h1>
-    <p class="sub">Irfan's commercial app — 4 outlets, POS, lending ledger, dealer book. The shell is live; modules build in next.</p>
-    <div class="card">
-      <h3>What's coming, in order</h3>
-      <ol>
-        <li>Outlets (COBO Faran · Mitiari · TAY · AWT) + CFO price master (Cost to COBO, Sale price)</li>
-        <li>Receive-from-O2S: shipments on the COBO channel → expected → on-hand stock</li>
-        <li>POS sales (cash / credit), returns, live stock</li>
-        <li>Lending ledger: receivables, mill-mediated lending, crushing-cycle settlement</li>
-        <li>Dealer book + dealer demand</li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3>Integration check</h3>
-      <p class="sub" style="margin:0">Reads VAN's brand catalogue from O2S (single source). Status below confirms the link.</p>
-      <pre id="cat" style="background:#f7faf8;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;overflow:auto;margin-top:10px">loading…</pre>
-    </div>
+    <div class="tabs"><div class="tab on" data-t="outlets" onclick="go('outlets')">Outlets</div><div class="tab" data-t="prices" onclick="go('prices')">Price master (CFO)</div></div>
+    <div id="panel"></div>
   </div>
+  <div class="toast" id="toast"></div>
 <script>
-  fetch('/api/o2s/catalogue').then(r=>r.json()).then(d=>{
-    document.getElementById('cat').textContent =
-      (d._mock ? '(MOCK — O2S endpoint not wired yet)\n' : '(live O2S)\n') +
-      'channels: ' + (d.channels||[]).join(', ') + '\n' +
-      'brands: ' + (d.brands||[]).map(b=>b.brand).join(', ');
-  }).catch(e=>document.getElementById('cat').textContent='error: '+e);
+let ME=null, TAB='outlets';
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200);}
+async function api(path,opts){ const r=await fetch('/api/cobo'+path,Object.assign({headers:{'Content-Type':'application/json'}},opts||{})); if(r.status===401){location.href='/login';return null;} const j=await r.json().catch(()=>null); if(!r.ok){toast((j&&j.error)||('error '+r.status));throw new Error((j&&j.error)||r.status);} return j; }
+function go(t){TAB=t;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===t));render();}
+
+async function render(){ if(TAB==='outlets') return renderOutlets(); return renderPrices(); }
+
+async function renderOutlets(){
+  const outlets=await api('/outlets');
+  const rows=outlets.map(o=>`<tr><td><b>${o.name}</b></td><td>${o.active!==false?'<span class="pos">active</span>':'<span class="muted">inactive</span>'}</td><td style="text-align:right"><span class="x" onclick="delOutlet('${o.id}','${o.name.replace(/'/g,'')}')">remove</span></td></tr>`).join('');
+  document.getElementById('panel').innerHTML=`<div class="card"><h3>Outlets</h3><div class="sub">The 4 COBO retail locations. Each has its own stock, sales and ledger.</div>
+    <table><thead><tr><th>Outlet</th><th>Status</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan=3 class=muted>none</td></tr>'}</tbody></table>
+    <div class="row"><input id="newOutlet" placeholder="new outlet name (e.g. COBO …)"><button class="btn" onclick="addOutlet()">+ Add outlet</button></div></div>`;
+}
+async function addOutlet(){ const name=document.getElementById('newOutlet').value.trim(); if(!name)return toast('Enter a name'); await api('/outlets',{method:'POST',body:JSON.stringify({name})}); toast('Added'); renderOutlets(); }
+async function delOutlet(id,name){ if(!confirm('Remove outlet "'+name+'"?'))return; await api('/outlets/'+id,{method:'DELETE'}); toast('Removed'); renderOutlets(); }
+
+async function renderPrices(){
+  const [cat,prices]=await Promise.all([api('/catalogue'),api('/prices')]);
+  const pmap={}; (prices||[]).forEach(p=>pmap[p.brand]=p);
+  const brands=(cat.brands||[]).map(b=>b.brand);
+  const rows=brands.map(br=>{ const p=pmap[br]||{}; const m=(+p.salePrice||0)-(+p.costToCobo||0);
+    return `<tr data-b="${br}"><td><b>${br}</b></td>
+      <td><input class="num cost" type="number" value="${p.costToCobo||''}" placeholder="0"></td>
+      <td><input class="num sale" type="number" value="${p.salePrice||''}" placeholder="0"></td>
+      <td><input class="num dmin" type="number" value="${p.discMin||''}" placeholder="0" style="max-width:70px"></td>
+      <td><input class="num dmax" type="number" value="${p.discMax||''}" placeholder="0" style="max-width:70px"></td>
+      <td class="mg ${m>=0?'pos':'neg'}" style="text-align:right">${m?m.toLocaleString():'—'}</td>
+      <td style="text-align:right"><button class="btn sm" onclick="savePrice(this)">Save</button></td></tr>`;}).join('');
+  document.getElementById('panel').innerHTML=`<div class="card"><h3>Price master <span class="muted" style="font-size:12px">· CFO-owned</span></h3>
+    <div class="sub">VAN brands (from O2S catalogue${cat._mock?' — MOCK, until the O2S endpoint is wired':''}). Set <b>Cost to COBO</b> and <b>Sale price</b> per brand; <b>Margin = Sale − Cost</b>. Discount range limits what outlet users may give.</div>
+    <table><thead><tr><th>Brand</th><th style="text-align:right">Cost to COBO</th><th style="text-align:right">Sale price</th><th>Disc% min</th><th>Disc% max</th><th style="text-align:right">Margin</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan=7 class=muted>No brands from catalogue.</td></tr>'}</tbody></table></div>`;
+  document.querySelectorAll('tr[data-b] input').forEach(inp=>inp.addEventListener('input',e=>{const tr=e.target.closest('tr');const m=(+tr.querySelector('.sale').value||0)-(+tr.querySelector('.cost').value||0);const mg=tr.querySelector('.mg');mg.textContent=m?m.toLocaleString():'—';mg.className='mg '+(m>=0?'pos':'neg');}));
+}
+async function savePrice(btn){ const tr=btn.closest('tr'); const body={brand:tr.dataset.b,costToCobo:+tr.querySelector('.cost').value||0,salePrice:+tr.querySelector('.sale').value||0,discMin:+tr.querySelector('.dmin').value||0,discMax:+tr.querySelector('.dmax').value||0};
+  try{ await api('/prices',{method:'POST',body:JSON.stringify(body)}); toast('Saved '+body.brand); }catch(e){} }
+
+(async function(){ const me=await fetch('/api/me'); if(!me.ok){location.href='/login';return;} ME=await me.json(); document.getElementById('who').innerHTML='<b>'+ME.user.name+'</b> · '+ME.user.role; render(); })();
 </script>
-</body>
-</html>
+</body></html>

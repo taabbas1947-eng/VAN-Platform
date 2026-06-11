@@ -1,26 +1,34 @@
 // van-platform — landing home + apps (COBO, VGreen…). Separate from the live O2S deploy.
-// Foundation build: real Express + sessions; users are a TEMP seed (move to its own DB at provisioning).
-
 const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const session = require('express-session');
 const o2s = require('./lib/o2sClient');
+const db = require('./lib/db');
+const coboRoutes = require('./cobo/routes');
+const coboStore = db.store('cobo');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || 'dev-only-change-me',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 8 },
-  })
-);
 
-// ---- App catalogue (what tiles exist) ----
+// Session store: Postgres-backed when a DB exists (persistent, no MemoryStore warning); memory otherwise.
+let store;
+if (db.usePg) {
+  try {
+    const PgStore = require('connect-pg-simple')(session);
+    store = new PgStore({ pool: db.pool, createTableIfMissing: true, tableName: 'platform_session' });
+  } catch (e) { console.error('pg session store unavailable, using memory:', e.message); }
+}
+app.use(session({
+  store,
+  secret: process.env.SESSION_SECRET || 'dev-only-change-me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 8 },
+}));
+
+// ---- App catalogue (the home tiles) ----
 const APPS = [
   { id: 'o2s',     name: 'Order-to-Shipment',  desc: 'PO → production → QC → dispatch (live core).', status: 'live',    entity: 'VAN',    href: process.env.O2S_BASE_URL || 'https://van-control-tower.onrender.com' },
   { id: 'cobo',    name: 'VAN COBO',           desc: '4 outlets · POS · stock · lending ledger.',     status: 'beta',    entity: 'VAN',    href: '/cobo' },
@@ -34,6 +42,7 @@ const APPS = [
 const SEED_USERS = [
   { u: 'tahir', name: 'Tahir Abbas',    role: 'COO',          pass: 'van123',  access: 'all' },
   { u: 'irfan', name: 'Muhammad Irfan', role: 'COBO Manager', pass: 'cobo123', access: ['cobo'] },
+  { u: 'yawar', name: 'Yawar (CFO)',    role: 'CFO',          pass: 'cfo123',  access: ['cobo'] },
 ];
 const USERS = {};
 for (const s of SEED_USERS) {
@@ -42,8 +51,7 @@ for (const s of SEED_USERS) {
   USERS[s.u] = { u: s.u, name: s.name, role: s.role, access: s.access, salt, hash };
 }
 function verify(u, pass) {
-  const rec = USERS[u];
-  if (!rec) return false;
+  const rec = USERS[u]; if (!rec) return false;
   const h = crypto.scryptSync(pass, rec.salt, 64).toString('hex');
   return crypto.timingSafeEqual(Buffer.from(h), Buffer.from(rec.hash));
 }
@@ -52,8 +60,15 @@ function canOpen(user, appId) {
 }
 function requireAuth(req, res, next) {
   if (req.session.user) return next();
-  if (req.path.startsWith('/api/')) return res.status(401).json({ error: 'not signed in' });
+  if ((req.originalUrl || req.path).startsWith('/api/')) return res.status(401).json({ error: 'not signed in' });
   return res.redirect('/login');
+}
+function requireApp(appId) {
+  return (req, res, next) => {
+    if (!req.session.user) return res.status(401).json({ error: 'not signed in' });
+    if (!canOpen(req.session.user, appId)) return res.status(403).json({ error: 'no access to ' + appId });
+    next();
+  };
 }
 
 // ---- Auth API ----
@@ -70,12 +85,11 @@ app.get('/api/me', (req, res) => {
   const user = req.session.user;
   res.json({ user, apps: APPS.map((a) => ({ ...a, open: a.status !== 'planned' && canOpen(user, a.id) })) });
 });
-app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'van-platform', o2sMock: o2s.MOCK }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'van-platform', o2sMock: o2s.MOCK, db: db.usePg ? 'postgres' : 'memory' }));
 
-// ---- O2S read passthrough (used by COBO) ----
-app.get('/api/o2s/catalogue', requireAuth, async (_req, res) => {
-  try { res.json(await o2s.getCatalogue()); } catch (e) { res.status(502).json({ error: String(e) }); }
-});
+// ---- O2S read passthrough + COBO module API ----
+app.get('/api/o2s/catalogue', requireAuth, async (_req, res) => { try { res.json(await o2s.getCatalogue()); } catch (e) { res.status(502).json({ error: String(e) }); } });
+app.use('/api/cobo', requireAuth, requireApp('cobo'), coboRoutes(coboStore, o2s));
 
 // ---- Static + page routes ----
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
@@ -86,4 +100,6 @@ app.get('/cobo', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'cobo', 'index.html'));
 });
 
-app.listen(PORT, () => console.log('van-platform on :' + PORT + (o2s.MOCK ? '  (O2S mock mode)' : '')));
+coboStore.init().then(() => {
+  app.listen(PORT, () => console.log('van-platform on :' + PORT + '  [' + (o2s.MOCK ? 'O2S mock' : 'O2S live') + ', db:' + (db.usePg ? 'postgres' : 'memory') + ']'));
+}).catch((e) => { console.error('db init failed:', e); app.listen(PORT, () => console.log('van-platform on :' + PORT + ' (db init failed, memory)')); });
