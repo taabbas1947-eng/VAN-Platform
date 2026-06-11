@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VAN Control Tower — Sign in</title>
+<style>
+  :root{--van:#1f7a43;--ink:#15301f;--mut:#6b7280;--line:#e3e8e4;--bg:#f4f7f5}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh;align-items:center;justify-content:center}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;width:340px;box-shadow:0 8px 30px rgba(20,48,31,.08)}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .mk{width:38px;height:38px;border-radius:10px;background:var(--van);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .brand b{font-size:15px}.brand span{display:block;font-size:11px;color:var(--mut)}
+  label{font-size:12px;font-weight:600;color:var(--mut);display:block;margin:12px 0 5px}
+  input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px}
+  button{width:100%;margin-top:18px;padding:11px;border:0;border-radius:9px;background:var(--van);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  .err{color:#c0392b;font-size:12.5px;margin-top:10px;min-height:16px}
+  .hint{font-size:11px;color:var(--mut);margin-top:14px;text-align:center}
+</style>
+</head>
+<body>
+  <form class="card" id="f">
+    <div class="brand"><div class="mk">V</div><div><b>VAN Control Tower</b><span>Vital Agri Nutrients</span></div></div>
+    <label>Username</label>
+    <input id="u" autocomplete="username" autofocus />
+    <label>Password</label>
+    <input id="p" type="password" autocomplete="current-password" />
+    <button type="submit">Sign in</button>
+    <div class="err" id="err"></div>
+    <div class="hint">Foundation build · seed login: <b>tahir / van123</b></div>
+  </form>
+<script>
+  document.getElementById('f').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = document.getElementById('err'); err.textContent = '';
+    const r = await fetch('/api/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ u: document.getElementById('u').value.trim(), pass: document.getElementById('p').value })
+    });
+    if (r.ok) location.href = '/';
+    else err.textContent = 'Invalid username or password.';
+  });
+</script>
+</body>
+</html>

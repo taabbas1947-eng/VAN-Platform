@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VAN COBO</title>
+<style>
+  :root{--van:#1f7a43;--van-50:#e8f5ec;--ink:#15301f;--mut:#6b7280;--line:#e3e8e4;--bg:#f4f7f5}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line)}
+  .mk{width:34px;height:34px;border-radius:9px;background:var(--van);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  header b{font-size:14px}.sp{flex:1}
+  a.back{font-size:12.5px;color:var(--van);text-decoration:none}
+  .wrap{max-width:880px;margin:0 auto;padding:26px 22px}
+  h1{font-size:20px;margin:0 0 4px}.sub{color:var(--mut);font-size:13px;margin:0 0 20px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
+  .card h3{margin:0 0 8px;font-size:14px}
+  ol{margin:6px 0 0;padding-left:20px;color:var(--mut);font-size:13px;line-height:1.7}
+  .pill{display:inline-block;font-size:10px;font-weight:800;background:#fef3df;color:#c4820a;border-radius:10px;padding:2px 9px;margin-left:8px}
+</style>
+</head>
+<body>
+  <header>
+    <div class="mk">C</div><div><b>VAN COBO</b></div>
+    <div class="sp"></div>
+    <a class="back" href="/">← Control Tower</a>
+  </header>
+  <div class="wrap">
+    <h1>VAN COBO <span class="pill">FOUNDATION</span></h1>
+    <p class="sub">Irfan's commercial app — 4 outlets, POS, lending ledger, dealer book. The shell is live; modules build in next.</p>
+    <div class="card">
+      <h3>What's coming, in order</h3>
+      <ol>
+        <li>Outlets (COBO Faran · Mitiari · TAY · AWT) + CFO price master (Cost to COBO, Sale price)</li>
+        <li>Receive-from-O2S: shipments on the COBO channel → expected → on-hand stock</li>
+        <li>POS sales (cash / credit), returns, live stock</li>
+        <li>Lending ledger: receivables, mill-mediated lending, crushing-cycle settlement</li>
+        <li>Dealer book + dealer demand</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Integration check</h3>
+      <p class="sub" style="margin:0">Reads VAN's brand catalogue from O2S (single source). Status below confirms the link.</p>
+      <pre id="cat" style="background:#f7faf8;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;overflow:auto;margin-top:10px">loading…</pre>
+    </div>
+  </div>
+<script>
+  fetch('/api/o2s/catalogue').then(r=>r.json()).then(d=>{
+    document.getElementById('cat').textContent =
+      (d._mock ? '(MOCK — O2S endpoint not wired yet)\n' : '(live O2S)\n') +
+      'channels: ' + (d.channels||[]).join(', ') + '\n' +
+      'brands: ' + (d.brands||[]).map(b=>b.brand).join(', ');
+  }).catch(e=>document.getElementById('cat').textContent='error: '+e);
+</script>
+</body>
+</html>
