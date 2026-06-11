@@ -22,10 +22,12 @@ app.use(
 
 // ---- App catalogue (what tiles exist) ----
 const APPS = [
-  { id: 'o2s',     name: 'Order-to-Shipment', desc: 'The live operational core.', status: 'live',    href: process.env.O2S_BASE_URL || 'https://van-control-tower.onrender.com' },
-  { id: 'cobo',    name: 'VAN COBO',          desc: '4 outlets · POS · ledger.',  status: 'beta',    href: '/cobo' },
-  { id: 'vgreen',  name: 'VGreen VC & FM',    desc: 'Contract-farming ledger.',   status: 'planned', href: '' },
-  { id: 'costing', name: 'VAN Master Costing',desc: 'Costing & client pricing.',  status: 'planned', href: '' },
+  { id: 'o2s',     name: 'Order-to-Shipment',  desc: 'PO → production → QC → dispatch (live core).', status: 'live',    entity: 'VAN',    href: process.env.O2S_BASE_URL || 'https://van-control-tower.onrender.com' },
+  { id: 'cobo',    name: 'VAN COBO',           desc: '4 outlets · POS · stock · lending ledger.',     status: 'beta',    entity: 'VAN',    href: '/cobo' },
+  { id: 'qms',     name: 'VAN QMS',            desc: 'Quality — inspections, non-conformance, compliance.', status: 'planned', entity: 'VAN',    href: '' },
+  { id: 'costing', name: 'VAN Master Costing', desc: 'Product costing & client pricing (CFO/CEO).',  status: 'planned', entity: 'VAN',    href: '' },
+  { id: 'vgreen',  name: 'VGreen VC & FM',     desc: 'Contract farming — farmer ledger & recovery.',  status: 'planned', entity: 'VGreen', href: '' },
+  { id: 'hr',      name: 'People Systems',     desc: 'People, org structure & workforce admin.',     status: 'planned', entity: 'VAN',    href: '' },
 ];
 
 // ---- TEMP seed users (replace with platform DB at provisioning) ----

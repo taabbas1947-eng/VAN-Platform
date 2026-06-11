@@ -4,12 +4,12 @@
   "private": true,
   "description": "VAN Control Tower platform — landing home + COBO/VGreen apps. Separate from the live O2S deploy.",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "scripts": { "start": "node server.js" },
   "engines": { "node": ">=18" },
   "dependencies": {
     "express": "^4.19.2",
-    "express-session": "^1.18.0"
+    "express-session": "^1.18.0",
+    "pg": "^8.11.5",
+    "connect-pg-simple": "^9.0.1"
   }
 }
